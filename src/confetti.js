@@ -1,6 +1,9 @@
 /* globals Map */
 
 (function main(global, module, isWorker, workerSize) {
+  var PI_10 = Math.PI / 10
+  var PI_180 = Math.PI / 180
+
   var canUseWorker = !!(
     global.Worker &&
     global.Blob &&
@@ -246,6 +249,7 @@
     ],
     // probably should be true, but back-compat
     disableForReducedMotion: false,
+    spikes: 5,
     scalar: 1
   };
 
@@ -336,8 +340,8 @@
   }
 
   function randomPhysics(opts) {
-    var radAngle = opts.angle * (Math.PI / 180);
-    var radSpread = opts.spread * (Math.PI / 180);
+    var radAngle = opts.angle * (PI_180);
+    var radSpread = opts.spread * (PI_180);
 
     return {
       x: opts.x,
@@ -361,6 +365,8 @@
       gravity: opts.gravity * 3,
       ovalScalar: 0.6,
       scalar: opts.scalar,
+      spikes: opts.spikes,
+      spin: opts.spin,
       flat: opts.flat
     };
   }
@@ -370,14 +376,28 @@
     fetti.y += Math.sin(fetti.angle2D) * fetti.velocity + fetti.gravity;
     fetti.velocity *= fetti.decay;
 
+    var x1, y1, x2, y2, scaleX, scaleY
     if (fetti.flat) {
-      fetti.wobble = 0;
+      if (fetti.spin) {
+        fetti.wobble += fetti.wobbleSpeed;
+      } else {
+        fetti.wobble = 0;
+      }
       fetti.wobbleX = fetti.x + (10 * fetti.scalar);
       fetti.wobbleY = fetti.y + (10 * fetti.scalar);
 
       fetti.tiltSin = 0;
       fetti.tiltCos = 0;
       fetti.random = 1;
+
+      x1 = fetti.x;
+      y1 = fetti.y;
+      x2 = fetti.wobbleX;
+      y2 = fetti.wobbleY;
+
+      scaleX = fetti.scalar;
+      scaleY = fetti.scalar;
+
     } else {
       fetti.wobble += fetti.wobbleSpeed;
       fetti.wobbleX = fetti.x + ((10 * fetti.scalar) * Math.cos(fetti.wobble));
@@ -387,14 +407,17 @@
       fetti.tiltSin = Math.sin(fetti.tiltAngle);
       fetti.tiltCos = Math.cos(fetti.tiltAngle);
       fetti.random = Math.random() + 2;
+
+      x1 = fetti.x + (fetti.random * fetti.tiltCos);
+      y1 = fetti.y + (fetti.random * fetti.tiltSin);
+      x2 = fetti.wobbleX + (fetti.random * fetti.tiltCos);
+      y2 = fetti.wobbleY + (fetti.random * fetti.tiltSin);
+
+      scaleX = Math.abs(x2 - x1) * 0.1;
+      scaleY = Math.abs(y2 - y1) * 0.1;
     }
 
     var progress = (fetti.tick++) / fetti.totalTicks;
-
-    var x1 = fetti.x + (fetti.random * fetti.tiltCos);
-    var y1 = fetti.y + (fetti.random * fetti.tiltSin);
-    var x2 = fetti.wobbleX + (fetti.random * fetti.tiltCos);
-    var y2 = fetti.wobbleY + (fetti.random * fetti.tiltSin);
 
     context.fillStyle = 'rgba(' + fetti.color.r + ', ' + fetti.color.g + ', ' + fetti.color.b + ', ' + (1 - progress) + ')';
 
@@ -406,14 +429,12 @@
         fetti.shape.matrix,
         fetti.x,
         fetti.y,
-        Math.abs(x2 - x1) * 0.1,
-        Math.abs(y2 - y1) * 0.1,
-        Math.PI / 10 * fetti.wobble
+        scaleX,
+        scaleY,
+        PI_10 * fetti.wobble
       ));
     } else if (fetti.shape.type === 'bitmap') {
-      var rotation = Math.PI / 10 * fetti.wobble;
-      var scaleX = Math.abs(x2 - x1) * 0.1;
-      var scaleY = Math.abs(y2 - y1) * 0.1;
+      var rotation = PI_10 * fetti.wobble;
       var width = fetti.shape.bitmap.width * fetti.scalar;
       var height = fetti.shape.bitmap.height * fetti.scalar;
 
@@ -443,15 +464,15 @@
       context.globalAlpha = 1;
     } else if (fetti.shape === 'circle') {
       context.ellipse ?
-        context.ellipse(fetti.x, fetti.y, Math.abs(x2 - x1) * fetti.ovalScalar, Math.abs(y2 - y1) * fetti.ovalScalar, Math.PI / 10 * fetti.wobble, 0, 2 * Math.PI) :
-        ellipse(context, fetti.x, fetti.y, Math.abs(x2 - x1) * fetti.ovalScalar, Math.abs(y2 - y1) * fetti.ovalScalar, Math.PI / 10 * fetti.wobble, 0, 2 * Math.PI);
+        context.ellipse(fetti.x, fetti.y, Math.abs(x2 - x1) * fetti.ovalScalar, Math.abs(y2 - y1) * fetti.ovalScalar, PI_10 * fetti.wobble, 0, 2 * Math.PI) :
+        ellipse(context, fetti.x, fetti.y, Math.abs(x2 - x1) * fetti.ovalScalar, Math.abs(y2 - y1) * fetti.ovalScalar, PI_10 * fetti.wobble, 0, 2 * Math.PI);
     } else if (fetti.shape === 'star') {
-      var rot = Math.PI / 2 * 3;
+      var rot = 1.5 * Math.PI ;
       var innerRadius = 4 * fetti.scalar;
       var outerRadius = 8 * fetti.scalar;
       var x = fetti.x;
       var y = fetti.y;
-      var spikes = 5;
+      var spikes = fetti.spikes;
       var step = Math.PI / spikes;
 
       while (spikes--) {
@@ -568,7 +589,9 @@
       var ticks = prop(options, 'ticks', Number);
       var shapes = prop(options, 'shapes');
       var scalar = prop(options, 'scalar');
+      var spikes = prop(options, 'spikes', Number);
       var flat = !!prop(options, 'flat');
+      var spin = !!prop(options, 'spin');
       var origin = getOrigin(options);
 
       var temp = particleCount;
@@ -592,6 +615,8 @@
             gravity: gravity,
             drift: drift,
             scalar: scalar,
+            spikes: spikes,
+            spin: spin,
             flat: flat
           })
         );
