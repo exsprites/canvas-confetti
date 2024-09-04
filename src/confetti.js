@@ -346,7 +346,7 @@
     return {
       x: opts.x,
       y: opts.y,
-      wobble: Math.random() * 10,
+      wobble: (opts.flat && opts.flatWobble) ? 0 : Math.random() * 10,
       wobbleSpeed: Math.min(0.11, Math.random() * 0.1 + 0.05),
       velocity: (opts.startVelocity * 0.5) + (Math.random() * opts.startVelocity),
       angle2D: -radAngle + ((0.5 * radSpread) - (Math.random() * radSpread)),
@@ -367,6 +367,7 @@
       scalar: opts.scalar,
       spikes: opts.spikes,
       spin: opts.spin,
+      flatWobble: opts.flatWobble,
       flat: opts.flat
     };
   }
@@ -380,8 +381,6 @@
     if (fetti.flat) {
       if (fetti.spin) {
         fetti.wobble += fetti.wobbleSpeed;
-      } else {
-        fetti.wobble = 0;
       }
       fetti.wobbleX = fetti.x + (10 * fetti.scalar);
       fetti.wobbleY = fetti.y + (10 * fetti.scalar);
@@ -591,6 +590,7 @@
       var scalar = prop(options, 'scalar');
       var spikes = prop(options, 'spikes', Number);
       var flat = !!prop(options, 'flat');
+      var flatWobble = !!prop(options, 'flatWobble');
       var spin = !!prop(options, 'spin');
       var origin = getOrigin(options);
 
@@ -617,6 +617,7 @@
             scalar: scalar,
             spikes: spikes,
             spin: spin,
+            flatWobble: flatWobble,
             flat: flat
           })
         );
