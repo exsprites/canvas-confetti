@@ -249,6 +249,8 @@
     ],
     // probably should be true, but back-compat
     disableForReducedMotion: false,
+    mode: false,
+    spinSpeed: 1,
     spikes: 5,
     scalar: 1
   };
@@ -346,8 +348,8 @@
     return {
       x: opts.x,
       y: opts.y,
-      wobble: (opts.flat && opts.flatWobble) ? 0 : Math.random() * 10,
-      wobbleSpeed: Math.min(0.11, Math.random() * 0.1 + 0.05),
+      wobble: opts.mode === 'flat' ? 0 : Math.random() * 10,
+      wobbleSpeed: opts.mode === 'flat' ? 0 : Math.min(0.11, Math.random() * 0.1 + 0.05),
       velocity: (opts.startVelocity * 0.5) + (Math.random() * opts.startVelocity),
       angle2D: -radAngle + ((0.5 * radSpread) - (Math.random() * radSpread)),
       tiltAngle: (Math.random() * (0.75 - 0.25) + 0.25) * Math.PI,
@@ -366,9 +368,8 @@
       ovalScalar: 0.6,
       scalar: opts.scalar,
       spikes: opts.spikes,
-      spin: opts.spin,
-      flatWobble: opts.flatWobble,
-      flat: opts.flat
+      spinSpeed: opts.spinSpeed,
+      mode: opts.mode
     };
   }
 
@@ -378,9 +379,9 @@
     fetti.velocity *= fetti.decay;
 
     var x1, y1, x2, y2, scaleX, scaleY
-    if (fetti.flat) {
-      if (fetti.spin) {
-        fetti.wobble += fetti.wobbleSpeed;
+    if (fetti.mode === 'flat' || fetti.mode === 'spin') {
+      if (fetti.mode === 'spin') {
+        fetti.wobble += fetti.spinSpeed * fetti.wobbleSpeed;
       }
       fetti.wobbleX = fetti.x + (10 * fetti.scalar);
       fetti.wobbleY = fetti.y + (10 * fetti.scalar);
@@ -589,9 +590,8 @@
       var shapes = prop(options, 'shapes');
       var scalar = prop(options, 'scalar');
       var spikes = prop(options, 'spikes', Number);
-      var flat = !!prop(options, 'flat');
-      var flatWobble = !!prop(options, 'flatWobble');
-      var spin = !!prop(options, 'spin');
+      var mode = prop(options, 'mode');
+      var spinSpeed = prop(options, 'spinSpeed', Number);
       var origin = getOrigin(options);
 
       var temp = particleCount;
@@ -616,9 +616,8 @@
             drift: drift,
             scalar: scalar,
             spikes: spikes,
-            spin: spin,
-            flatWobble: flatWobble,
-            flat: flat
+            spinSpeed: spinSpeed,
+            mode: mode
           })
         );
       }
