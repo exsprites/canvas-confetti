@@ -841,12 +841,12 @@
 
     const w = spinning ? Math.round(Math.sqrt(2) * (Math.max(width, height))) : width
     const h = spinning ? Math.round(Math.sqrt(2) * (Math.max(width, height))) : height
-    const dx = 0.5 * (w - width)
-    const dy = 0.5 * (h - height)
+    const dx = Math.floor(0.5 * (w - width))
+    const dy = Math.floor(0.5 * (h - height))
 
     var canvas = new OffscreenCanvas(w, h);
     ctx = canvas.getContext('2d');
-    ctx.drawImage(image, x, y, width, height, dx, dy)
+    ctx.drawImage(image, x, y, width, height, dx, dy, width, height)
 
     var scale = 1 / scalar;
 
