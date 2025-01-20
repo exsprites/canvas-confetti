@@ -145,6 +145,44 @@ declare namespace confetti {
         y?: number | undefined;
     }
 
+    interface ShapeFromImageOptions {
+        image: HTMLImageElement,
+        width?: number,
+        height?: number,
+        x?: number,
+        y?: number,
+        scalar?: number
+    }
+
+    interface ShapeFromPathOptions {
+        path: string
+        matrix?: DOMMatrix|number[]
+    }
+
+    interface ShapeFromTextOptions {
+        /**
+         * The text to be rendered as a confetti. If you can't make up your mind, I suggest "🐈".
+         */
+        text: string;
+        /**
+         * A scale value relative to the default size. It matches the scalar value in the confetti options.
+         * @default 1
+         */
+        scalar?: number;
+        /**
+         * The color used to render the text.
+         * @default '#000000'
+         */
+        color?: string;
+        /**
+         * The font family name to use when rendering the text.
+         * The default follows [best practices for rendring the native OS emoji of the device](https://nolanlawson.com/2022/04/08/the-struggle-of-using-native-emoji-on-the-web/), falling back to sans-serif.
+         * If using a web font, make sure this [font is loaded](https://developer.mozilla.org/en-US/docs/Web/API/FontFace/load) before rendering your confetti.
+         * @default '"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", "EmojiOne Color", "Android Emoji", "Twemoji Mozilla", "system emoji", sans-serif'
+         */
+        fontFamily?: string;
+    }
+
     interface GlobalOptions {
         /**
          * Disables confetti entirely for users that prefer reduced motion. When set to true, use of this
@@ -167,56 +205,17 @@ declare namespace confetti {
     /**
      * This helper method lets you create a custom confetti shape from Image source
      */
-    function shapeFromImage(imageData: {
-        image: HTMLImageElement,
-        width?: number,
-        height?: number,
-        x?: number,
-        y?: number,
-        scalar?: number
-    }): Shape;
+    function shapeFromImage(imageData: ShapeFromImageOptions): Shape;
 
     /**
      * This helper method lets you create a custom confetti shape using an SVG Path string.
      */
-    function shapeFromPath(pathData: string): Shape;
-    function shapeFromPath(pathData: {
-        path: string
-        matrix?: DOMMatrix|number[]
-    }): Shape;
+    function shapeFromPath(pathData: string|ShapeFromPathOptions): Shape;
 
     /**
      * This is the highly anticipated feature to render emoji confetti! Use any standard unicode emoji. Or other text.
      */
-    function shapeFromText(
-        /**
-         * The text to be rendered as a confetti. If you can't make up your mind, I suggest "🐈".
-         */
-        textData: string
-    ): Shape;
-    function shapeFromText(textData: {
-        /**
-         * The text to be rendered as a confetti. If you can't make up your mind, I suggest "🐈".
-         */
-        text: string;
-        /**
-         * A scale value relative to the default size. It matches the scalar value in the confetti options.
-         * @default 1
-         */
-        scalar?: number;
-        /**
-         * The color used to render the text.
-         * @default '#000000'
-         */
-        color?: string;
-        /**
-         * The font family name to use when rendering the text.
-         * The default follows [best practices for rendring the native OS emoji of the device](https://nolanlawson.com/2022/04/08/the-struggle-of-using-native-emoji-on-the-web/), falling back to sans-serif.
-         * If using a web font, make sure this [font is loaded](https://developer.mozilla.org/en-US/docs/Web/API/FontFace/load) before rendering your confetti.
-         * @default '"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", "EmojiOne Color", "Android Emoji", "Twemoji Mozilla", "system emoji", sans-serif'
-         */
-        fontFamily?: string;
-    }): Shape;
+    function shapeFromText(textData: string|ShapeFromTextOptions): Shape;
 
     /**
      * Stops the animation and clears all confetti, as well as immediately resolves any outstanding promises.
