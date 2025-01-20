@@ -3,7 +3,7 @@
   "version": "1.9.3",
   "description": "performant confetti animation in the browser",
   "main": "src/confetti.js",
-  "types": "./types/index.d.ts",
+  "types": "@types/index.d.ts",
   "module": "dist/confetti.module.mjs",
   "jsdelivr": "dist/confetti.browser.js",
   "scripts": {
