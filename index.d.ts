@@ -38,6 +38,22 @@ declare namespace confetti {
 
     interface Options {
         /**
+         * Particle mode, default is 3D, flat (flat and static), or spin (flat and spin)
+         * @default undefined
+         */
+        mode?: 'flat' | 'spin'
+        /**
+         * Applied for mode = 'spin'
+         * @default 1
+         */
+        spinSpeed?: number
+        /**
+         * Number of spikes for shape = 'star'
+         * @default 5
+         */
+        spikes?: number
+
+        /**
          * The angle in which to launch the confetti, in degrees. 90 is straight up.
          * @default 90
          */
@@ -149,6 +165,18 @@ declare namespace confetti {
     }
 
     /**
+     * This helper method lets you create a custom confetti shape from Image source
+     */
+    function shapeFromImage(imageData: {
+        image: HTMLImageElement,
+        width?: number,
+        height?: number,
+        x?: number,
+        y?: number,
+        scalar?: number
+    }): Shape;
+
+    /**
      * This helper method lets you create a custom confetti shape using an SVG Path string.
      */
     function shapeFromPath(pathData: string): Shape;
@@ -161,7 +189,7 @@ declare namespace confetti {
         /**
          * The text to be rendered as a confetti. If you can't make up your mind, I suggest "🐈".
          */
-        textData: string,
+        textData: string
     ): Shape;
     function shapeFromText(textData: {
         /**
