@@ -146,11 +146,12 @@ declare namespace confetti {
     }
 
     interface ShapeFromImageOptions {
-        image: HTMLImageElement,
-        width?: number,
-        height?: number,
-        x?: number,
-        y?: number,
+        image: HTMLImageElement
+        spinning?: boolean
+        width?: number
+        height?: number
+        x?: number
+        y?: number
         scalar?: number
     }
 

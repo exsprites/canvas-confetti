@@ -831,15 +831,22 @@
   }
 
   function shapeFromImage(imageData) {
+    const spinning = imageData.spinning
     const image = imageData.image
     const width = imageData.width || image.width
     const height = imageData.height || image.height
     const x = imageData.x || 0
     const y = imageData.y || 0
+    const scalar = imageData.scalar || 1
 
-    var canvas = new OffscreenCanvas(width, height);
+    const w = spinning ? Math.round(Math.sqrt(2) * (Math.max(width, height))) : width
+    const h = spinning ? Math.round(Math.sqrt(2) * (Math.max(width, height))) : height
+    const dx = 0.5 * (w - width)
+    const dy = 0.5 * (h - height)
+
+    var canvas = new OffscreenCanvas(w, h);
     ctx = canvas.getContext('2d');
-    ctx.drawImage(image, x, y, width, height)
+    ctx.drawImage(image, x, y, width, height, dx, dy)
 
     var scale = 1 / scalar;
 
@@ -847,7 +854,7 @@
       type: 'bitmap',
       // TODO these probably need to be transfered for workers
       bitmap: canvas.transferToImageBitmap(),
-      matrix: [scale, 0, 0, scale, -width * scale / 2, -height * scale / 2]
+      matrix: [scale, 0, 0, scale, -w * scale / 2, -h * scale / 2]
     };
   }
 
