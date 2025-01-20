@@ -180,7 +180,10 @@ declare namespace confetti {
      * This helper method lets you create a custom confetti shape using an SVG Path string.
      */
     function shapeFromPath(pathData: string): Shape;
-    function shapeFromPath(pathData: { path: string; matrix?: DOMMatrix }): Shape;
+    function shapeFromPath(pathData: {
+        path: string
+        matrix?: DOMMatrix|number[]
+    }): Shape;
 
     /**
      * This is the highly anticipated feature to render emoji confetti! Use any standard unicode emoji. Or other text.
