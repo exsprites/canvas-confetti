@@ -830,6 +830,27 @@
     };
   }
 
+  function shapeFromImage(imageData) {
+    const image = imageData.image
+    const width = imageData.width || image.width
+    const height = imageData.height || image.height
+    const x = imageData.x || 0
+    const y = imageData.y || 0
+
+    var canvas = new OffscreenCanvas(width, height);
+    ctx = canvas.getContext('2d');
+    ctx.drawImage(image, x, y, width, height)
+
+    var scale = 1 / scalar;
+
+    return {
+      type: 'bitmap',
+      // TODO these probably need to be transfered for workers
+      bitmap: canvas.transferToImageBitmap(),
+      matrix: [scale, 0, 0, scale, -width * scale / 2, -height * scale / 2]
+    };
+  }
+
   function shapeFromText(textData) {
     var text,
         scalar = 1,
@@ -891,6 +912,7 @@
   module.exports.create = confettiCannon;
   module.exports.shapeFromPath = shapeFromPath;
   module.exports.shapeFromText = shapeFromText;
+  module.exports.shapeFromImage = shapeFromImage;
 }((function () {
   if (typeof window !== 'undefined') {
     return window;
