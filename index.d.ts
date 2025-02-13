@@ -146,7 +146,7 @@ declare namespace confetti {
     }
 
     interface ShapeFromImageOptions {
-        image: HTMLImageElement
+        image: HTMLImageElement|HTMLCanvasElement|SVGImageElement|HTMLVideoElement|ImageBitmap|OffscreenCanvas|VideoFrame
         spinning?: boolean
         width?: number
         height?: number
