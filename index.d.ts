@@ -186,6 +186,10 @@ declare namespace confetti {
 
     interface GlobalOptions {
         /**
+         * Set this to multiply to all options.scalar
+         */
+        scalarScale?: number | undefined;
+        /**
          * Disables confetti entirely for users that prefer reduced motion. When set to true, use of this
          * confetti instance will always respect a user's request for reduced motion and disable confetti for them.
          * @default false

@@ -569,6 +569,7 @@
     var isLibCanvas = !canvas;
     var allowResize = !!prop(globalOpts || {}, 'resize');
     var hasResizeEventRegistered = false;
+    var scalarScale = prop(globalOpts, 'scalarScale', Number) || 1;
     var globalDisableForReducedMotion = prop(globalOpts, 'disableForReducedMotion', Boolean);
     var shouldUseWorker = canUseWorker && !!prop(globalOpts || {}, 'useWorker');
     var worker = shouldUseWorker ? getWorker() : null;
@@ -588,7 +589,7 @@
       var colors = prop(options, 'colors', colorsToRgb);
       var ticks = prop(options, 'ticks', Number);
       var shapes = prop(options, 'shapes');
-      var scalar = prop(options, 'scalar');
+      var scalar = prop(options, 'scalar') * scalarScale;
       var spikes = prop(options, 'spikes', Number);
       var mode = prop(options, 'mode');
       var spinSpeed = prop(options, 'spinSpeed', Number);
