@@ -132,9 +132,9 @@
       function execute(options, callback) {
         worker.postMessage({ options: options || {}, callback: callback });
       }
-      worker.init = function initWorker(canvas) {
+      worker.init = function initWorker(canvas, scalarScale) {
         var offscreen = canvas.transferControlToOffscreen();
-        worker.postMessage({ canvas: offscreen }, [offscreen]);
+        worker.postMessage({ canvas: offscreen, scalarScale }, [offscreen]);
       };
 
       worker.fire = function fireWorker(options, size, done) {
@@ -188,7 +188,7 @@
 
       if (!isWorker && canUseWorker) {
         var code = [
-          'var CONFETTI, SIZE = {}, module = {};',
+          'var CONFETTI, SIZE = {}, GLOBAL_OPTS = {}, module = {};',
           '(' + main.toString() + ')(this, module, true, SIZE);',
           'onmessage = function(msg) {',
           '  if (msg.data.options) {',
@@ -205,7 +205,8 @@
           '  } else if (msg.data.canvas) {',
           '    SIZE.width = msg.data.canvas.width;',
           '    SIZE.height = msg.data.canvas.height;',
-          '    CONFETTI = module.exports.create(msg.data.canvas);',
+          '    GLOBAL_OPTS.scalarScale = msg.data.scalarScale || 1;',
+          '    CONFETTI = module.exports.create(msg.data.canvas, GLOBAL_OPTS);',
           '  }',
           '}',
         ].join('\n');
@@ -576,7 +577,7 @@
     var resizer = isLibCanvas ? setCanvasWindowSize : setCanvasRectSize;
     var initialized = (canvas && worker) ? !!canvas.__confetti_initialized : false;
     var preferLessMotion = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion)').matches;
-    var animationObj;
+    var animationObj;    
 
     function fireLocal(options, size, done) {
       var particleCount = prop(options, 'particleCount', onlyPositiveInt);
@@ -601,7 +602,7 @@
       var startX = canvas.width * origin.x;
       var startY = canvas.height * origin.y;
 
-      while (temp--) {
+      while (temp--) {        
         fettis.push(
           randomPhysics({
             x: startX,
@@ -664,7 +665,7 @@
       };
 
       if (worker && !initialized) {
-        worker.init(canvas);
+        worker.init(canvas, scalarScale);
       }
 
       initialized = true;
