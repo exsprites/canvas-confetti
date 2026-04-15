@@ -22,12 +22,11 @@
       return false;
     }
 
-    var canvas = new OffscreenCanvas(1, 1);
-    var ctx = canvas.getContext('2d');
-    ctx.fillRect(0, 0, 1, 1);
-    var bitmap = canvas.transferToImageBitmap();
-
     try {
+      var canvas = new OffscreenCanvas(1, 1);
+      var ctx = canvas.getContext('2d');
+      ctx.fillRect(0, 0, 1, 1);
+      var bitmap = canvas.transferToImageBitmap();
       ctx.createPattern(bitmap, 'no-repeat');
     } catch (e) {
       return false;
@@ -214,7 +213,7 @@
           worker = new Worker(URL.createObjectURL(new Blob([code])));
         } catch (e) {
           // eslint-disable-next-line no-console
-          typeof console !== undefined && typeof console.warn === 'function' ? console.warn('🎊 Could not load worker', e) : null;
+          typeof console !== 'undefined' && typeof console.warn === 'function' ? console.warn('🎊 Could not load worker', e) : null;
 
           return null;
         }
@@ -711,7 +710,7 @@
 
         if (isLibCanvas && canvas) {
           if (document.body.contains(canvas)) {
-            document.body.removeChild(canvas); 
+            document.body.removeChild(canvas);
           }
           canvas = null;
           initialized = false;
